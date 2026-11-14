@@ -6565,6 +6565,13 @@ void InitAlloc()
 
    hx::CommonInitAlloc();
    sgAllocInit = true;
+   #if defined(HXCPP_GC_BLOCK_16K)
+   printf("[HXCPP] Immix Allocator initialized with 16KB blocks (HXCPP_GC_BLOCK_16K)\n");
+   #elif defined(HXCPP_GC_BIG_BLOCKS)
+   printf("[HXCPP] Immix Allocator initialized with 64KB blocks (HXCPP_GC_BIG_BLOCKS)\n");
+   #else
+   printf("[HXCPP] Immix Allocator initialized with standard 32KB blocks\n");
+   #endif
    sGlobalAlloc = new GlobalAllocator();
    sgFinalizers = new FinalizerList();
    sFinalizerLock = new std::mutex();
@@ -6973,6 +6980,11 @@ double __hxcpp_gc_mem_info(int inWhich)
          return (double)sGlobalAlloc->MemLarge();
    }
    return 0;
+}
+
+int __hxcpp_gc_block_size()
+{
+   return IMMIX_BLOCK_SIZE;
 }
 
 int   __hxcpp_gc_used_bytes()
